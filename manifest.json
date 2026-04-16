@@ -1,0 +1,17 @@
+{
+  "name": "HITO English",
+  "short_name": "English",
+  "description": "英語リーディング＆ボキャブラリー学習アプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1923",
+  "theme_color": "#1a2332",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a2332">
+  <title>HITO English</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Setup Screen -->
+  <div id="setup-screen" class="screen" style="display:none;">
+    <div class="setup-container">
+      <h1>HITO English</h1>
+      <p class="setup-desc">GitHubリポジトリと連携して英語学習を管理します。</p>
+      <form id="setup-form">
+        <label>
+          GitHub Personal Access Token
+          <input type="password" id="setup-token" required
+                 placeholder="ghp_xxxxxxxxxxxx">
+          <small>Settings → Developer settings → Personal access tokens で作成。Contents Read and write 権限が必要です。</small>
+        </label>
+        <label>
+          データリポジトリ（owner/repo）
+          <input type="text" id="setup-repo" required
+                 placeholder="例: HITO-510/english-data">
+        </label>
+        <button type="submit" class="btn-primary">接続する</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="screen" style="display:none;">
+    <!-- Header -->
+    <header id="app-header">
+      <div class="header-left">
+        <h1 class="app-title">HITO English</h1>
+      </div>
+      <div class="header-right">
+        <button id="btn-refresh" class="icon-btn" aria-label="更新">🔄</button>
+        <button id="btn-settings" class="icon-btn" aria-label="設定">⚙</button>
+      </div>
+    </header>
+
+    <!-- Views -->
+    <main id="main-content">
+      <!-- Today View -->
+      <div id="view-today" class="view active">
+        <div id="today-streak" class="streak-banner"></div>
+        <div id="today-articles" class="article-list"></div>
+        <div id="today-review" class="review-section"></div>
+      </div>
+
+      <!-- Library View -->
+      <div id="view-library" class="view">
+        <div id="library-filters" class="genre-filters">
+          <button class="genre-chip active" data-genre="all">All</button>
+          <button class="genre-chip" data-genre="tech">Tech</button>
+          <button class="genre-chip" data-genre="business">Business</button>
+          <button class="genre-chip" data-genre="finance">Finance</button>
+          <button class="genre-chip" data-genre="health">Health</button>
+        </div>
+        <div id="library-articles" class="article-list"></div>
+      </div>
+
+      <!-- Stats View -->
+      <div id="view-stats" class="view">
+        <div id="stats-cards" class="stats-cards"></div>
+        <section class="dash-section">
+          <h3 class="dash-section-title">今月の記録</h3>
+          <div id="stats-heatmap" class="dash-heatmap"></div>
+        </section>
+        <section class="dash-section">
+          <h3 class="dash-section-title">語彙カテゴリ</h3>
+          <div id="stats-vocab" class="vocab-breakdown"></div>
+        </section>
+        <section class="dash-section">
+          <h3 class="dash-section-title">最近の単語</h3>
+          <div id="stats-recent-words" class="recent-words"></div>
+        </section>
+        <div id="stats-review-btn" class="stats-review-btn"></div>
+      </div>
+    </main>
+
+    <!-- Bottom Tab Bar -->
+    <nav id="tab-bar" class="tab-bar">
+      <button class="tab-btn active" data-tab="today">
+        <span class="tab-icon">📖</span>
+        <span class="tab-label">Today</span>
+      </button>
+      <button class="tab-btn" data-tab="library">
+        <span class="tab-icon">📚</span>
+        <span class="tab-label">Library</span>
+      </button>
+      <button class="tab-btn" data-tab="stats">
+        <span class="tab-icon">📊</span>
+        <span class="tab-label">Stats</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Article Reader Modal -->
+  <div id="reader-modal" class="modal" style="display:none;">
+    <div class="modal-content reader-content">
+      <div class="reader-header">
+        <button id="btn-reader-back" class="icon-btn">← Back</button>
+        <span id="reader-meta"></span>
+      </div>
+      <div class="reader-body-wrap">
+        <h2 id="reader-title" class="reader-title"></h2>
+        <div id="reader-info" class="reader-info"></div>
+        <div id="reader-body" class="reader-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annotation Tooltip -->
+  <div id="annotation-tooltip" class="annotation-tooltip" style="display:none;">
+    <div id="tooltip-content"></div>
+    <button id="tooltip-add-btn" class="btn-primary btn-sm">+ Add to Cards</button>
+    <button id="tooltip-close" class="tooltip-close">✕</button>
+  </div>
+
+  <!-- Flashcard Review Modal -->
+  <div id="review-modal" class="modal" style="display:none;">
+    <div class="modal-content review-content">
+      <div class="review-header">
+        <button id="btn-review-back" class="icon-btn">← Back</button>
+        <span id="review-progress"></span>
+        <button id="btn-review-skip" class="icon-btn">Skip</button>
+      </div>
+      <div class="review-card-area">
+        <div id="review-card" class="flashcard">
+          <div class="flashcard-front">
+            <span id="card-front-text"></span>
+          </div>
+          <div class="flashcard-back" style="display:none;">
+            <span id="card-back-meaning"></span>
+            <span id="card-back-meaning-ja" class="meaning-ja"></span>
+            <span id="card-back-example" class="example"></span>
+          </div>
+        </div>
+        <p id="review-tap-hint" class="tap-hint">tap to flip</p>
+      </div>
+      <div id="review-buttons" class="review-buttons" style="display:none;">
+        <button class="review-btn btn-again" data-quality="0">Again</button>
+        <button class="review-btn btn-hard" data-quality="3">Hard</button>
+        <button class="review-btn btn-good" data-quality="4">Good</button>
+        <button class="review-btn btn-easy" data-quality="5">Easy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal" style="display:none;">
+    <div class="modal-content settings-content">
+      <div class="settings-header">
+        <button id="btn-settings-back" class="icon-btn">← 戻る</button>
+        <h2>設定</h2>
+      </div>
+      <form id="settings-form">
+        <label>
+          GitHub Token
+          <input type="password" id="settings-token">
+        </label>
+        <label>
+          データリポジトリ
+          <input type="text" id="settings-repo">
+        </label>
+        <button type="submit" class="btn-primary">保存</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+    <p id="loading-text">読み込み中...</p>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" style="display:none;"></div>
+
+  <script src="js/articles.js"></script>
+  <script src="js/flashcards.js"></script>
+  <script src="js/github.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
