@@ -48,6 +48,10 @@
     readerTitle: $('#reader-title'),
     readerInfo: $('#reader-info'),
     readerBody: $('#reader-body'),
+    readerPages: $('#reader-pages'),
+    readerTitleJa: $('#reader-title-ja'),
+    readerBodyJa: $('#reader-body-ja'),
+    ttsBtn: $('#btn-tts'),
     // Tooltip
     annotationTooltip: $('#annotation-tooltip'),
     tooltipContent: $('#tooltip-content'),
@@ -272,8 +276,19 @@
     dom.readerTitle.textContent = article.title;
     dom.readerInfo.textContent = `${article.wordCount || '?'} words · ${article.level || 'B2-C1'}`;
 
-    // Render annotated body
+    // Render annotated body (English)
     dom.readerBody.innerHTML = Articles.renderAnnotatedBody(article);
+
+    // Render Japanese translation
+    dom.readerTitleJa.textContent = article.title_ja || article.title;
+    if (article.body_ja && article.body_ja.length > 0) {
+      dom.readerBodyJa.innerHTML = article.body_ja
+        .filter(b => b.type === 'paragraph')
+        .map(b => `<p>${escHtml(b.text)}</p>`)
+        .join('');
+    } else {
+      dom.readerBodyJa.innerHTML = '<p class="no-translation">← 左にスワイプすると日本語訳が表示されます（次回以降の記事から対応）</p>';
+    }
 
     // Add completion section if not already read
     const isRead = readingLog.entries.some(e => e.articleId === article.id);
@@ -284,6 +299,10 @@
           <p>Article completed!</p>
         </div>`;
     }
+
+    // Reset to English page and stop any playing TTS
+    dom.readerPages.scrollLeft = 0;
+    stopTTS();
 
     dom.readerModal.style.display = 'flex';
     closeTooltip();
@@ -307,6 +326,7 @@
     dom.readerModal.style.display = 'none';
     currentArticle = null;
     closeTooltip();
+    stopTTS();
   }
 
   async function trackReading(articleId) {
@@ -346,6 +366,53 @@
     }
     const dates = readingLog.entries.map(e => e.date).sort();
     stats.streakLastDate = dates.length ? dates[dates.length - 1] : '';
+  }
+
+  // ---- Text-to-Speech ----
+
+  let ttsPlaying = false;
+
+  function startTTS() {
+    if (!currentArticle || !window.speechSynthesis) return;
+
+    // Toggle: if already playing, stop
+    if (ttsPlaying) {
+      window.speechSynthesis.cancel();
+      return; // onend will reset state
+    }
+
+    const text = (currentArticle.body || [])
+      .filter(b => b.type === 'paragraph')
+      .map(b => b.text)
+      .join('\n\n');
+    if (!text) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.88;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      ttsPlaying = true;
+      dom.ttsBtn.textContent = '⏹';
+      dom.ttsBtn.classList.add('playing');
+    };
+    utterance.onend = utterance.onerror = () => {
+      ttsPlaying = false;
+      dom.ttsBtn.textContent = '🔊';
+      dom.ttsBtn.classList.remove('playing');
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stopTTS() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    ttsPlaying = false;
+    if (dom.ttsBtn) {
+      dom.ttsBtn.textContent = '🔊';
+      dom.ttsBtn.classList.remove('playing');
+    }
   }
 
   // ---- Annotation Tooltip ----
@@ -688,6 +755,16 @@
 
     // Reader
     $('#btn-reader-back').addEventListener('click', closeArticle);
+
+    // TTS
+    dom.ttsBtn.addEventListener('click', startTTS);
+
+    // Page indicator — update dots on swipe, stop TTS on Japanese page
+    dom.readerPages.addEventListener('scroll', () => {
+      const page = Math.round(dom.readerPages.scrollLeft / (dom.readerPages.clientWidth || 1));
+      $$('.page-dot').forEach((dot, i) => dot.classList.toggle('active', i === page));
+      if (page === 1) stopTTS();
+    }, { passive: true });
 
     // Annotation click
     dom.readerBody.addEventListener('click', (e) => {

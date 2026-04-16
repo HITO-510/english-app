@@ -110,11 +110,29 @@
       <div class="reader-header">
         <button id="btn-reader-back" class="icon-btn">← Back</button>
         <span id="reader-meta"></span>
+        <button id="btn-tts" class="icon-btn tts-btn" aria-label="読み上げ">🔊</button>
       </div>
-      <div class="reader-body-wrap">
-        <h2 id="reader-title" class="reader-title"></h2>
-        <div id="reader-info" class="reader-info"></div>
-        <div id="reader-body" class="reader-body"></div>
+      <div class="reader-page-indicator">
+        <span class="page-dot active"></span>
+        <span class="page-dot"></span>
+      </div>
+      <div class="reader-pages" id="reader-pages">
+        <!-- English page -->
+        <div class="reader-page" id="reader-page-en">
+          <div class="reader-body-wrap">
+            <h2 id="reader-title" class="reader-title"></h2>
+            <div id="reader-info" class="reader-info"></div>
+            <div id="reader-body" class="reader-body"></div>
+          </div>
+        </div>
+        <!-- Japanese translation page -->
+        <div class="reader-page" id="reader-page-ja">
+          <div class="reader-body-wrap reader-body-wrap-ja">
+            <h2 id="reader-title-ja" class="reader-title reader-title-ja"></h2>
+            <div class="reader-lang-badge">🇯🇵 日本語訳</div>
+            <div id="reader-body-ja" class="reader-body reader-body-ja"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

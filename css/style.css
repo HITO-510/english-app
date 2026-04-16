@@ -487,13 +487,7 @@ form small {
   color: var(--text-muted);
 }
 
-.reader-body-wrap {
-  flex: 1;
-  padding: 20px 16px;
-  padding-bottom: calc(20px + var(--safe-bottom));
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
+/* .reader-body-wrap is now scoped inside .reader-page — see Reader Pages section */
 
 .reader-title {
   font-size: 22px;
@@ -547,6 +541,96 @@ form small {
 
 .reader-complete .emoji { font-size: 36px; margin-bottom: 8px; }
 .reader-complete p { color: var(--text-muted); font-size: 14px; }
+
+/* ---- Reader Pages (swipe left/right) ---- */
+.reader-pages {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.reader-pages::-webkit-scrollbar { display: none; }
+
+.reader-page {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+}
+
+.reader-page .reader-body-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 16px;
+  padding-bottom: calc(20px + var(--safe-bottom));
+}
+
+/* override old .reader-body-wrap to not conflict */
+.reader-body-wrap-ja {
+  background: var(--navy-light);
+}
+
+/* Page indicator dots */
+.reader-page-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  background: var(--navy);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.page-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.page-dot.active {
+  background: var(--orange);
+  transform: scale(1.2);
+}
+
+/* TTS button */
+.tts-btn { font-size: 20px; }
+
+.tts-btn.playing { color: var(--orange); }
+
+/* Japanese translation page */
+.reader-title-ja { color: var(--text-muted); font-size: 19px; }
+
+.reader-lang-badge {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--navy);
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.reader-body-ja { font-size: 16px; line-height: 2; }
+.reader-body-ja p { margin-bottom: 20px; }
+
+.no-translation {
+  color: var(--text-dark);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  padding: 40px 0;
+}
 
 /* ---- Annotation Tooltip ---- */
 .annotation-tooltip {
