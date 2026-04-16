@@ -381,29 +381,38 @@
       return; // onend will reset state
     }
 
-    const text = (currentArticle.body || [])
+    const paragraphs = (currentArticle.body || [])
       .filter(b => b.type === 'paragraph')
-      .map(b => b.text)
-      .join('\n\n');
-    if (!text) return;
+      .map(b => b.text);
+    if (paragraphs.length === 0) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.88;
-    utterance.pitch = 1.0;
+    ttsPlaying = true;
+    dom.ttsBtn.textContent = '⏹';
+    dom.ttsBtn.classList.add('playing');
 
-    utterance.onstart = () => {
-      ttsPlaying = true;
-      dom.ttsBtn.textContent = '⏹';
-      dom.ttsBtn.classList.add('playing');
-    };
-    utterance.onend = utterance.onerror = () => {
-      ttsPlaying = false;
-      dom.ttsBtn.textContent = '🔊';
-      dom.ttsBtn.classList.remove('playing');
-    };
+    // Queue each paragraph as a separate utterance — natural pause between paragraphs
+    paragraphs.forEach((text, i) => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = 0.88;
+      u.pitch = 1.0;
 
-    window.speechSynthesis.speak(utterance);
+      // After the last paragraph, reset button state
+      if (i === paragraphs.length - 1) {
+        u.onend = () => {
+          ttsPlaying = false;
+          dom.ttsBtn.textContent = '🔊';
+          dom.ttsBtn.classList.remove('playing');
+        };
+      }
+      u.onerror = () => {
+        ttsPlaying = false;
+        dom.ttsBtn.textContent = '🔊';
+        dom.ttsBtn.classList.remove('playing');
+      };
+
+      window.speechSynthesis.speak(u);
+    });
   }
 
   function stopTTS() {

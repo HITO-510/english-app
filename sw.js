@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hito-english-v2';
+const CACHE_NAME = 'hito-english-v3';
 const ASSETS = [
   './',
   './index.html',
