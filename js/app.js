@@ -51,7 +51,6 @@
     readerPages: $('#reader-pages'),
     readerTitleJa: $('#reader-title-ja'),
     readerBodyJa: $('#reader-body-ja'),
-    ttsBtn: $('#btn-tts'),
     // Tooltip
     annotationTooltip: $('#annotation-tooltip'),
     tooltipContent: $('#tooltip-content'),
@@ -279,6 +278,16 @@
     // Render annotated body (English)
     dom.readerBody.innerHTML = Articles.renderAnnotatedBody(article);
 
+    // Append grammar point card if available
+    if (article.grammar) {
+      dom.readerBody.innerHTML += grammarCardHtml(article.grammar);
+    }
+
+    // Append TOEIC quiz if available
+    if (article.quiz) {
+      dom.readerBody.innerHTML += quizCardHtml(article.quiz);
+    }
+
     // Render Japanese translation
     dom.readerTitleJa.textContent = article.title_ja || article.title;
     if (article.body_ja && article.body_ja.length > 0) {
@@ -300,9 +309,8 @@
         </div>`;
     }
 
-    // Reset to English page and stop any playing TTS
+    // Reset to English page
     dom.readerPages.scrollLeft = 0;
-    stopTTS();
 
     dom.readerModal.style.display = 'flex';
     closeTooltip();
@@ -326,7 +334,6 @@
     dom.readerModal.style.display = 'none';
     currentArticle = null;
     closeTooltip();
-    stopTTS();
   }
 
   async function trackReading(articleId) {
@@ -368,60 +375,59 @@
     stats.streakLastDate = dates.length ? dates[dates.length - 1] : '';
   }
 
-  // ---- Text-to-Speech ----
+  // ---- Quiz Card ----
 
-  let ttsPlaying = false;
-
-  function startTTS() {
-    if (!currentArticle || !window.speechSynthesis) return;
-
-    // Toggle: if already playing, stop
-    if (ttsPlaying) {
-      window.speechSynthesis.cancel();
-      return; // onend will reset state
-    }
-
-    const paragraphs = (currentArticle.body || [])
-      .filter(b => b.type === 'paragraph')
-      .map(b => b.text);
-    if (paragraphs.length === 0) return;
-
-    ttsPlaying = true;
-    dom.ttsBtn.textContent = '⏹';
-    dom.ttsBtn.classList.add('playing');
-
-    // Queue each paragraph as a separate utterance — natural pause between paragraphs
-    paragraphs.forEach((text, i) => {
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      u.rate = 0.88;
-      u.pitch = 1.0;
-
-      // After the last paragraph, reset button state
-      if (i === paragraphs.length - 1) {
-        u.onend = () => {
-          ttsPlaying = false;
-          dom.ttsBtn.textContent = '🔊';
-          dom.ttsBtn.classList.remove('playing');
-        };
-      }
-      u.onerror = () => {
-        ttsPlaying = false;
-        dom.ttsBtn.textContent = '🔊';
-        dom.ttsBtn.classList.remove('playing');
-      };
-
-      window.speechSynthesis.speak(u);
-    });
+  function quizCardHtml(quiz) {
+    const letters = ['A', 'B', 'C', 'D'];
+    const options = (quiz.options || []).map((opt, i) => `
+      <button class="quiz-option" data-index="${i}" data-answer="${quiz.answer}">
+        <span class="quiz-letter">${letters[i]}</span>
+        <span class="quiz-option-text">${escHtml(opt)}</span>
+      </button>`).join('');
+    return `
+      <div class="quiz-card" id="article-quiz">
+        <div class="quiz-header">
+          <span class="quiz-icon">📝</span>
+          <span class="quiz-label">TOEIC Quiz</span>
+        </div>
+        <p class="quiz-question">${escHtml(quiz.question)}</p>
+        <div class="quiz-options">${options}</div>
+        <div class="quiz-explanation" style="display:none">${escHtml(quiz.explanation_ja || '')}</div>
+      </div>`;
   }
 
-  function stopTTS() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-    ttsPlaying = false;
-    if (dom.ttsBtn) {
-      dom.ttsBtn.textContent = '🔊';
-      dom.ttsBtn.classList.remove('playing');
-    }
+  function handleQuizClick(optionEl) {
+    const card = optionEl.closest('.quiz-card');
+    if (!card || card.dataset.answered) return;
+    card.dataset.answered = '1';
+
+    const chosen = parseInt(optionEl.dataset.index, 10);
+    const correct = parseInt(optionEl.dataset.answer, 10);
+
+    card.querySelectorAll('.quiz-option').forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correct) btn.classList.add('quiz-correct');
+      else if (i === chosen) btn.classList.add('quiz-wrong');
+    });
+
+    const exp = card.querySelector('.quiz-explanation');
+    if (exp) exp.style.display = 'block';
+  }
+
+  // ---- Grammar Card ----
+
+  function grammarCardHtml(grammar) {
+    return `
+      <div class="grammar-card">
+        <div class="grammar-card-header">
+          <span class="grammar-icon">📐</span>
+          <span class="grammar-label">Grammar Focus</span>
+          <span class="grammar-point-name">${escHtml(grammar.point)}</span>
+        </div>
+        <blockquote class="grammar-sentence">${escHtml(grammar.sentence)}</blockquote>
+        <p class="grammar-explanation">${escHtml(grammar.explanation_ja)}</p>
+        ${grammar.tip ? `<p class="grammar-tip">💡 ${escHtml(grammar.tip)}</p>` : ''}
+      </div>`;
   }
 
   // ---- Annotation Tooltip ----
@@ -765,18 +771,19 @@
     // Reader
     $('#btn-reader-back').addEventListener('click', closeArticle);
 
-    // TTS
-    dom.ttsBtn.addEventListener('click', startTTS);
-
-    // Page indicator — update dots on swipe, stop TTS on Japanese page
+    // Page indicator — update dots on swipe
     dom.readerPages.addEventListener('scroll', () => {
       const page = Math.round(dom.readerPages.scrollLeft / (dom.readerPages.clientWidth || 1));
       $$('.page-dot').forEach((dot, i) => dot.classList.toggle('active', i === page));
-      if (page === 1) stopTTS();
     }, { passive: true });
 
-    // Annotation click
+    // Annotation click + Quiz click (shared delegation)
     dom.readerBody.addEventListener('click', (e) => {
+      const quizOpt = e.target.closest('.quiz-option');
+      if (quizOpt) {
+        handleQuizClick(quizOpt);
+        return;
+      }
       const el = e.target.closest('.annotated');
       if (!el) return;
       $$('.annotated.active').forEach(a => a.classList.remove('active'));
