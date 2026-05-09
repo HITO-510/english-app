@@ -1,28 +1,30 @@
 /* ========================================
    HITO English - Style
-   Color: Navy (#1a2332) + Orange (#e8833a)
+   Color: Turquoise (#069A8E / IP Tier1) + Honey Gold (#D4A04A)
    ======================================== */
 
 :root {
-  --navy: #1a2332;
-  --navy-light: #243347;
-  --navy-lighter: #2d4059;
-  --orange: #e8833a;
-  --orange-light: #f09a5a;
+  --teal: #1F2A2B;
+  --teal-light: #2A3838;
+  --teal-lighter: #3F5A5C;
+  --turquoise: #069A8E;
+  --turquoise-light: #0BB8A8;
+  --gold: #D4A04A;
+  --gold-light: #E0B563;
   --text: #e8e8e8;
   --text-muted: #8899aa;
   --text-dark: #556677;
-  --bg: #0f1923;
-  --bg-card: #1a2332;
-  --bg-input: #243347;
-  --border: #2d4059;
+  --bg: #162020;
+  --bg-card: #1F2A2B;
+  --bg-input: #2A3838;
+  --border: #3F5A5C;
   --success: #4caf82;
   --danger: #e85555;
   --radius: 12px;
   --radius-sm: 8px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  /* Genre colors */
+  /* Genre colors (article genre & vocab type — kept independent of brand palette) */
   --genre-tech: #4a9eff;
   --genre-business: #4caf82;
   --genre-finance: #f0c040;
@@ -54,7 +56,7 @@ body {
 
 .setup-container h1 {
   font-size: 28px;
-  color: var(--orange);
+  color: var(--gold);
   margin-bottom: 8px;
 }
 
@@ -87,7 +89,7 @@ form select {
 }
 
 form input:focus, form select:focus {
-  border-color: var(--orange);
+  border-color: var(--turquoise);
 }
 
 form small {
@@ -102,7 +104,7 @@ form small {
 .btn-primary {
   display: inline-block;
   padding: 12px 28px;
-  background: var(--orange);
+  background: var(--turquoise);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
@@ -112,7 +114,7 @@ form small {
   transition: background 0.2s;
 }
 
-.btn-primary:hover { background: var(--orange-light); }
+.btn-primary:hover { background: var(--turquoise-light); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-sm { padding: 8px 16px; font-size: 14px; }
 
@@ -141,7 +143,7 @@ form small {
   transition: background 0.2s;
 }
 
-.icon-btn:hover { background: var(--navy-light); }
+.icon-btn:hover { background: var(--teal-light); }
 
 /* ---- Header ---- */
 #app-header {
@@ -150,7 +152,7 @@ form small {
   align-items: center;
   padding: 12px 16px;
   padding-top: calc(12px + var(--safe-top));
-  background: var(--navy);
+  background: var(--teal);
   border-bottom: 1px solid var(--border);
 }
 
@@ -163,13 +165,13 @@ form small {
 .app-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--orange);
+  color: var(--gold);
 }
 
 /* ---- Bottom Tab Bar ---- */
 .tab-bar {
   display: flex;
-  background: var(--navy);
+  background: var(--teal);
   border-top: 1px solid var(--border);
   padding-bottom: calc(14px + var(--safe-bottom));
 }
@@ -188,7 +190,7 @@ form small {
   transition: color 0.2s;
 }
 
-.tab-btn.active { color: var(--orange); }
+.tab-btn.active { color: var(--turquoise); }
 .tab-icon { font-size: 20px; }
 .tab-label { font-size: 11px; font-weight: 600; }
 
@@ -212,7 +214,7 @@ form small {
 .streak-number {
   font-size: 48px;
   font-weight: 800;
-  color: var(--orange);
+  color: var(--gold);
   line-height: 1.1;
 }
 
@@ -245,7 +247,7 @@ form small {
   position: relative;
 }
 
-.article-card:hover { border-color: var(--orange); }
+.article-card:hover { border-color: var(--turquoise); }
 
 .article-card-top {
   display: flex;
@@ -295,7 +297,7 @@ form small {
 
 .genre-chip {
   padding: 6px 14px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border: 1px solid var(--border);
   border-radius: 20px;
   font-size: 13px;
@@ -305,8 +307,8 @@ form small {
 }
 
 .genre-chip:hover, .genre-chip.active {
-  background: var(--orange);
-  border-color: var(--orange);
+  background: var(--turquoise);
+  border-color: var(--turquoise);
   color: #fff;
 }
 
@@ -329,7 +331,7 @@ form small {
 .stat-value {
   font-size: 28px;
   font-weight: 700;
-  color: var(--orange);
+  color: var(--gold);
   line-height: 1.2;
 }
 
@@ -363,20 +365,20 @@ form small {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border-radius: 6px;
   font-size: 12px;
   color: var(--text-dark);
 }
 
 .heatmap-cell.filled {
-  background: var(--orange);
+  background: var(--turquoise);
   color: #fff;
   font-weight: 600;
 }
 
 .heatmap-cell.today {
-  outline: 2px solid var(--orange-light);
+  outline: 2px solid var(--turquoise-light);
   outline-offset: -1px;
 }
 
@@ -411,7 +413,7 @@ form small {
 .vocab-bar-track {
   flex: 1;
   height: 20px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -444,7 +446,7 @@ form small {
 
 .word-chip {
   padding: 4px 12px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border: 1px solid var(--border);
   border-radius: 16px;
   font-size: 13px;
@@ -478,7 +480,7 @@ form small {
   justify-content: space-between;
   padding: 12px 16px;
   padding-top: calc(12px + var(--safe-top));
-  background: var(--navy);
+  background: var(--teal);
   border-bottom: 1px solid var(--border);
 }
 
@@ -514,13 +516,13 @@ form small {
 
 /* Annotated words/phrases */
 .annotated {
-  border-bottom: 2px dotted var(--orange);
+  border-bottom: 2px dotted var(--turquoise);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .annotated:hover, .annotated.active {
-  background: rgba(232, 131, 58, 0.15);
+  background: rgba(6, 154, 142, 0.15);
 }
 
 .annotated-phrase {
@@ -575,7 +577,7 @@ form small {
 
 /* override old .reader-body-wrap to not conflict */
 .reader-body-wrap-ja {
-  background: var(--navy-light);
+  background: var(--teal-light);
 }
 
 /* Page indicator dots */
@@ -585,7 +587,7 @@ form small {
   align-items: center;
   gap: 8px;
   padding: 7px 0;
-  background: var(--navy);
+  background: var(--teal);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -599,7 +601,7 @@ form small {
 }
 
 .page-dot.active {
-  background: var(--orange);
+  background: var(--turquoise);
   transform: scale(1.2);
 }
 
@@ -611,7 +613,7 @@ form small {
   display: inline-block;
   font-size: 12px;
   color: var(--text-muted);
-  background: var(--navy);
+  background: var(--teal);
   padding: 3px 12px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -634,8 +636,8 @@ form small {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--navy-light);
-  border-top: 2px solid var(--orange);
+  background: var(--teal-light);
+  border-top: 2px solid var(--turquoise);
   padding: 16px;
   padding-bottom: calc(16px + var(--safe-bottom));
   z-index: 250;
@@ -661,7 +663,7 @@ form small {
 .tooltip-word {
   font-size: 20px;
   font-weight: 700;
-  color: var(--orange);
+  color: var(--gold);
   margin-bottom: 4px;
 }
 
@@ -704,7 +706,7 @@ form small {
   justify-content: space-between;
   padding: 12px 16px;
   padding-top: calc(12px + var(--safe-top));
-  background: var(--navy);
+  background: var(--teal);
   border-bottom: 1px solid var(--border);
 }
 
@@ -792,7 +794,7 @@ form small {
 }
 
 .btn-again { background: var(--danger); }
-.btn-hard { background: var(--navy-lighter); }
+.btn-hard { background: var(--teal-lighter); }
 .btn-good { background: var(--genre-business); }
 .btn-easy { background: var(--genre-tech); }
 
@@ -803,7 +805,7 @@ form small {
   justify-content: space-between;
   padding: 12px 16px;
   padding-top: calc(12px + var(--safe-top));
-  background: var(--navy);
+  background: var(--teal);
   border-bottom: 1px solid var(--border);
 }
 
@@ -842,7 +844,7 @@ form small {
 .loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 25, 35, 0.85);
+  background: rgba(22, 32, 32, 0.85);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -854,7 +856,7 @@ form small {
   width: 40px;
   height: 40px;
   border: 3px solid var(--border);
-  border-top-color: var(--orange);
+  border-top-color: var(--turquoise);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -873,7 +875,7 @@ form small {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
@@ -916,7 +918,7 @@ form small {
 /* ---- Quiz Card ---- */
 .quiz-card {
   margin: 24px 0 8px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border: 1px solid var(--border);
   border-left: 3px solid #4a9eff;
   border-radius: var(--radius);
@@ -960,7 +962,7 @@ form small {
   gap: 10px;
   width: 100%;
   text-align: left;
-  background: var(--navy-lighter);
+  background: var(--teal-lighter);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 10px 14px;
@@ -973,7 +975,7 @@ form small {
 
 .quiz-option:hover:not(:disabled) {
   border-color: #4a9eff;
-  background: var(--navy);
+  background: var(--teal);
 }
 
 .quiz-option:disabled { cursor: default; }
@@ -1005,16 +1007,16 @@ form small {
   line-height: 1.75;
   color: var(--text-muted);
   padding: 10px 14px;
-  background: var(--navy-lighter);
+  background: var(--teal-lighter);
   border-radius: var(--radius-sm);
 }
 
 /* ---- Grammar Card ---- */
 .grammar-card {
   margin: 32px 0 8px;
-  background: var(--navy-light);
+  background: var(--teal-light);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--orange);
+  border-left: 3px solid var(--turquoise);
   border-radius: var(--radius);
   padding: 16px 18px;
 }
@@ -1034,7 +1036,7 @@ form small {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--turquoise);
 }
 
 .grammar-point-name {
@@ -1050,7 +1052,7 @@ form small {
   border-left: none;
   margin: 0 0 12px;
   padding: 10px 14px;
-  background: var(--navy-lighter);
+  background: var(--teal-lighter);
   border-radius: var(--radius-sm);
   line-height: 1.7;
 }
